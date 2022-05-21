@@ -5,6 +5,12 @@ set -u
 
 export IDF_PATH=$(cd $(dirname $0); pwd)
 
+echo "Detecting the Python interpreter"
+. "${IDF_PATH}/tools/detect_python.sh"
+
+echo "Checking Python compatibility"
+"${ESP_PYTHON}" "${IDF_PATH}/tools/python_version_checker.py"
+
 echo "Installing ESP-IDF tools"
 ${IDF_PATH}/tools/idf_tools.py install
 
