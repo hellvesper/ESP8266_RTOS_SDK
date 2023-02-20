@@ -57,6 +57,8 @@ extern "C" {
 #define GPIO_PIN_COUNT              17
 
 #define GPIO_IS_VALID_GPIO(gpio_num)      ((gpio_num < GPIO_PIN_COUNT))   /*!< Check whether it is a valid GPIO number */
+// Backport for compatibility (as of all gpios in esp8266 is bidirectional, next macros is for backports compatibility only, do not use in new code
+#define GPIO_IS_VALID_OUTPUT_GPIO(gpio_num)      ((GPIO_IS_VALID_GPIO(gpio_num)) && (gpio_num < GPIO_NUM_MAX))         /*!< Check whether it can be a valid GPIO number of output mode */
 #define RTC_GPIO_IS_VALID_GPIO(gpio_num)     ((gpio_num == 16))    /*!< Check whether it is a valid RTC GPIO number */
 
 typedef enum {
@@ -177,6 +179,20 @@ esp_err_t gpio_set_level(gpio_num_t gpio_num, uint32_t level);
  *     - 1 the GPIO input level is 1
  */
 int gpio_get_level(gpio_num_t gpio_num);
+
+/**
+ * @brief Compatibility backport from esp32-idf
+ * ESP8266 doesn't have gpio matrix, this func is for compatibility with esp(32)-idf only
+ * Note: this function init GPIO in input mode with interrupt disabled, and pull up/down disabled
+ *
+ *
+ * @param  gpio_num  Configure GPIO pins number, it should be GPIO number. If you want to select e.g. GPIO16, gpio_num should be GPIO_NUM_16 (16);
+ *
+ * @return
+ *     - ESP_OK success
+ *     - ESP_ERR_INVALID_ARG Parameter error
+ */
+esp_err_t gpio_pad_select_gpio(gpio_num_t gpio_num);
 
 /**
  * @brief  GPIO set direction
